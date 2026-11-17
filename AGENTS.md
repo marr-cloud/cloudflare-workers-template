@@ -34,7 +34,7 @@ The same applies to any library you add (Hono, Zod, …): read its current docs 
 | `.oxfmtrc.jsonc`            | Formatter config and ignore patterns                                     |
 | `vitest.config.mts`         | Vitest + Cloudflare plugin, reads `wrangler.jsonc`                       |
 | `.dev.vars.example`         | Documents local secrets; copy to `.dev.vars` (gitignored)                |
-| `.github/workflows/`        | `ci.yml` (every push/PR) and `deploy.yml` (manual)                       |
+| `.github/workflows/`        | `ci.yml` (push/PR), `deploy.yml` (manual), `dependabot-typegen.yml`      |
 
 ## Commands
 
@@ -62,7 +62,10 @@ Before saying a change is done, run `pnpm check` and read the output. It runs, i
 - Lint or format failures: run `pnpm lint:fix` / `pnpm format`, then re-check. Do not disable rules
   to get green; if a rule is genuinely wrong for the case, use a scoped
   `// oxlint-disable-next-line <rule> -- <reason>`.
-- `cf-typegen:check` failure: run `pnpm cf-typegen` and commit the regenerated file.
+- `cf-typegen:check` failure: run `pnpm cf-typegen` and commit the regenerated file. Wrangler's
+  error message says "Run `wrangler types`" — ignore that wording: bare `wrangler types` generates
+  an `Env` interface instead of `CloudflareBindings` and breaks every type reference.
+  On Dependabot PRs, `dependabot-typegen.yml` does this automatically.
 
 ## Conventions
 
@@ -110,6 +113,7 @@ unit tests.
 ## Don't
 
 - Edit or format `worker-configuration.d.ts` by hand.
+- Run bare `wrangler types` — always `pnpm cf-typegen` (it passes `--env-interface CloudflareBindings`).
 - Add Prettier, ESLint or another formatter/linter — the oxc toolchain covers both.
 - Commit `.dev.vars`, `.env*`, tokens or account IDs.
 - Run `wrangler deploy`, `wrangler secret put` or anything touching a live account without the
