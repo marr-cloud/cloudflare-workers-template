@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Lets dependabot-typegen.yml re-run CI after pushing regenerated types.
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -29,6 +31,10 @@ jobs:
       - run: pnpm run lint
 
       - run: pnpm run format:check
+
+      # Fails when worker-configuration.d.ts no longer matches wrangler.jsonc
+      # or the installed workerd runtime. Fix with `pnpm cf-typegen`.
+      - run: pnpm run cf-typegen:check
 
       - run: pnpm run typecheck
 

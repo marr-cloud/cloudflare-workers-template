@@ -1,0 +1,93 @@
+name: Dependabot typegen
+
+# A `wrangler` bump changes the workerd runtime types, so Dependabot PRs fail
+# `pnpm cf-typegen:check` in CI. This workflow regenerates
+# worker-configuration.d.ts on those PRs, commits it, and re-runs CI.
+#
+# Split into two jobs on purpose: `generate` installs the (untrusted, freshly
+# bumped) dependencies with a read-only token; `commit` has write access but
+# never installs or runs dependency code.
+#
+# Note: once this pushes to a Dependabot branch, Dependabot stops rebasing that
+# PR automatically. Comment `@dependabot recreate` if you need a fresh one.
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    name: Regenerate worker types
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm run cf-typegen
+
+      - id: diff
+        run: |
+          if git diff --quiet -- worker-configuration.d.ts; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - if: steps.diff.outputs.changed == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: worker-configuration
+          path: worker-configuration.d.ts
+          retention-days: 1
+
+  commit:
+    name: Commit regenerated types
+    needs: generate
+    if: needs.generate.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.head_ref }}
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: worker-configuration
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add worker-configuration.d.ts
+          git commit -m "chore: regenerate worker types"
+          git push
+
+      # Pushes made with GITHUB_TOKEN do not trigger `pull_request` runs, but
+      # `workflow_dispatch` always does, so re-run CI on the new commit.
+      - name: Re-run CI
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: gh workflow run ci.yml --ref "$HEAD_REF"
