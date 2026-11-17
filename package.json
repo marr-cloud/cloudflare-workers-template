@@ -9,7 +9,6 @@
 	},
 	"scripts": {
 		"dev": "wrangler dev",
-		"start": "wrangler dev",
 		"deploy": "wrangler deploy",
 		"test": "vitest run",
 		"test:watch": "vitest",
@@ -22,12 +21,12 @@
 		"cf-typegen": "wrangler types --env-interface CloudflareBindings"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-plugin": "^1.4.11",
+		"@cloudflare/vitest-plugin": "^1.8.2",
 		"@types/node": "^26.6.6",
-		"oxlint": "^1.90.0",
-		"prettier": "^3.9.10",
+		"oxlint": "^1.93.0",
+		"prettier": "^3.10.1",
 		"typescript": "^7.0.2",
-		"vitest": "~4.1.12",
-		"wrangler": "^4.151.1"
+		"vitest": "~5.1.0",
+		"wrangler": "^4.162.0"
 	}
 }
