@@ -3,10 +3,6 @@
 	"version": "0.0.0",
 	"private": true,
 	"type": "module",
-	"packageManager": "pnpm@12.8.1",
-	"engines": {
-		"node": ">=22.12.0"
-	},
 	"scripts": {
 		"dev": "wrangler dev",
 		"deploy": "wrangler deploy",
@@ -15,18 +11,22 @@
 		"typecheck": "tsc --noEmit && tsc --noEmit -p test/tsconfig.json",
 		"lint": "oxlint -D correctness -D suspicious -A unicorn/consistent-function-scoping -A unicorn/filename-case -A unicorn/no-null -A unicorn/prevent-abbreviations --ignore-pattern dist --ignore-pattern coverage .",
 		"lint:fix": "pnpm run lint --fix",
-		"format": "prettier --write .",
-		"format:check": "prettier --check .",
+		"format": "oxfmt",
+		"format:check": "oxfmt --check",
 		"check": "pnpm run lint && pnpm run format:check && pnpm run typecheck && pnpm run test",
 		"cf-typegen": "wrangler types --env-interface CloudflareBindings"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-plugin": "^1.8.2",
 		"@types/node": "^26.6.6",
+		"oxfmt": "^0.78.0",
 		"oxlint": "^1.93.0",
-		"prettier": "^3.10.1",
 		"typescript": "^7.0.2",
 		"vitest": "~5.1.0",
 		"wrangler": "^4.162.0"
-	}
+	},
+	"engines": {
+		"node": ">=22.12.0"
+	},
+	"packageManager": "pnpm@12.8.1"
 }

@@ -1,6 +1,7 @@
 import { createExecutionContext, waitOnExecutionContext } from "cloudflare:test";
 import { env, exports } from "cloudflare:workers";
 import { describe, expect, it } from "vitest";
+
 import worker from "../src/index";
 
 // Narrows the global `Request` to the Cloudflare-flavoured one that
