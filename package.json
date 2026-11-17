@@ -9,18 +9,20 @@
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"typecheck": "tsc --noEmit && tsc --noEmit -p test/tsconfig.json",
-		"lint": "oxlint -D correctness -D suspicious -A unicorn/consistent-function-scoping -A unicorn/filename-case -A unicorn/no-null -A unicorn/prevent-abbreviations --ignore-pattern dist --ignore-pattern coverage .",
-		"lint:fix": "pnpm run lint --fix",
+		"lint": "oxlint",
+		"lint:fix": "oxlint --fix",
 		"format": "oxfmt",
 		"format:check": "oxfmt --check",
-		"check": "pnpm run lint && pnpm run format:check && pnpm run typecheck && pnpm run test",
-		"cf-typegen": "wrangler types --env-interface CloudflareBindings"
+		"check": "pnpm run lint && pnpm run format:check && pnpm run cf-typegen:check && pnpm run typecheck && pnpm run test",
+		"cf-typegen": "wrangler types --env-interface CloudflareBindings",
+		"cf-typegen:check": "wrangler types --env-interface CloudflareBindings --check"
 	},
 	"devDependencies": {
 		"@cloudflare/vitest-plugin": "^1.8.2",
 		"@types/node": "^26.6.6",
 		"oxfmt": "^0.78.0",
 		"oxlint": "^1.93.0",
+		"oxlint-tsgolint": "^7.0.2007",
 		"typescript": "^7.0.2",
 		"vitest": "~5.1.0",
 		"wrangler": "^4.162.0"

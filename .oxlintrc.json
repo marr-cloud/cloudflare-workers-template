@@ -1,0 +1,19 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["eslint", "typescript", "unicorn", "oxc", "import", "vitest"],
+	"categories": {
+		"correctness": "error",
+		"suspicious": "error"
+	},
+	"options": {
+		"typeAware": true
+	},
+	"rules": {
+		"typescript/no-floating-promises": "error",
+		"typescript/no-misused-promises": "error",
+		"unicorn/consistent-function-scoping": "off",
+		"unicorn/filename-case": "off",
+		"unicorn/no-null": "off"
+	},
+	"ignorePatterns": ["dist", "coverage", ".wrangler", "worker-configuration.d.ts"]
+}
