@@ -18,14 +18,14 @@
 		"cf-typegen:check": "wrangler types --env-interface CloudflareBindings --check"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-plugin": "^1.8.2",
+		"@cloudflare/vitest-plugin": "^1.9.0",
 		"@types/node": "^26.6.6",
-		"oxfmt": "^0.78.0",
-		"oxlint": "^1.93.0",
-		"oxlint-tsgolint": "^7.0.2007",
+		"oxfmt": "^0.79.0",
+		"oxlint": "^1.94.0",
+		"oxlint-tsgolint": "^7.0.2008",
 		"typescript": "^7.0.2",
-		"vitest": "~5.1.0",
-		"wrangler": "^4.162.0"
+		"vitest": "~5.1.1",
+		"wrangler": "^4.166.0"
 	},
 	"engines": {
 		"node": ">=22.12.0"
